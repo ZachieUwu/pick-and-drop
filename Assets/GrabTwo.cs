@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GrabTwo : MonoBehaviour
 {
-    bool Pressed = false;
+    bool isHolding = false;
     public GameObject hoverTextPrefab;
     private GameObject hoverTextInstance;
     private bool isHovering = false;
@@ -25,7 +25,7 @@ public class GrabTwo : MonoBehaviour
         hoverTextInstance.SetActive(true);
 
         Vector2 mousePos = Input.mousePosition;
-        hoverTextInstance.transform.position = mousePos + new Vector2(0, 20);
+        hoverTextInstance.transform.position = mousePos + new Vector2(0, 100);
     }
 
     private void OnMouseExit()
@@ -36,21 +36,33 @@ public class GrabTwo : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Pressed = true;
+        if (!isHolding)
+        {
+            PickUpObject();
+        }
+        else
+        {
+            DropObject();
+        }
+    }
+
+    private void PickUpObject()
+    {
+        isHolding = true;
         isHovering = false;
         hoverTextInstance.SetActive(false);
         GetComponent<Rigidbody2D>().isKinematic = true;
     }
 
-    private void OnMouseUp()
+    private void DropObject()
     {
-        Pressed = false;
+        isHolding = false;
         GetComponent<Rigidbody2D>().isKinematic = false;
     }
 
-    void Update()
+    private void Update()
     {
-        if (Pressed)
+        if (isHolding)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             transform.position = mousePos;
@@ -59,7 +71,7 @@ public class GrabTwo : MonoBehaviour
         if (isHovering && hoverTextInstance != null)
         {
             Vector2 screenPosition = Camera.main.WorldToScreenPoint(transform.position);
-            hoverTextInstance.transform.position = screenPosition + new Vector2(0, 20);
+            hoverTextInstance.transform.position = screenPosition + new Vector2(0, 100);
         }
     }
 }
